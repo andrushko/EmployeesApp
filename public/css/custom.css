@@ -54,3 +54,15 @@ li.nav-item.active a{
       padding-left: 240px;
   }
 }
+
+@media (min-width: 576px){
+  .jumbotron {
+      padding: 1rem 0.5rem; 
+  }
+}
+
+#btnSaveSettings{
+  margin-top: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+}

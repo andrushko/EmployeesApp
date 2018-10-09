@@ -1,42 +1,80 @@
-var ew = (function(){
-	// settings: {
+var ew = (function() {
+    var apihost = 'https://andrushko-test1.herokuapp.com';
+    var lsAppSettings = 'EmplStorage';
+    saveAppSettings();
 
-	// },
-	// caches: {
-	// 	appshell: 'appshell',
-	// 	dynamic: 'dynamic'
-	// },
-	// apis: {
-	// 	employees: ''
-	// }
-})();
+    return {
+        socket: 'wss://andrushko-test1.herokuapp.com',
+        caches: {
+            appshell: 'appshell',
+            dynamic: 'dynamic'
+        },
+        apis: {
+            apihost: apihost,
+            employees: apihost + '/employees'
+        },
+        http: { },
+        fn: { 
+            saveAppSettings: saveAppSettings,
+            getAppSettings: getAppSettings
+        },
+        database: {
+            name: 'EmployeesDatabase',
+            version: 2,
+            migrations: {
+                1: function(db) {
+                    db.createObjectStore("Employees", { keyPath: "id" });
+                },
+                2: function(db, openreq) {
+                    openreq.transaction.objectStore('Employees')
+                           .createIndex('email', 'email', { unique: true });
+                }
+            }
+        },
+    }
 
+    function saveAppSettings(settings) {
+        var appSettings = getAppSettings();
+        if(!appSettings) {
+            localStorage.setItem(lsAppSettings, JSON.stringify({}));
+        } else if(settings){
+            localStorage.setItem(lsAppSettings, JSON.stringify(settings));
+        }
+    }
 
+    function getAppSettings(){
+        return JSON.parse(localStorage.getItem(lsAppSettings));
+    }
+}());
 
+(function() {
+    setUserIcon();
+    document.body.addEventListener('userChanged', function(){
+        console.log('GLOBAL_USER_CHANGED');
+    });
 
-function urlBase64ToUint8Array(base64String) {
-  var padding = '='.repeat((4 - base64String.length % 4) % 4);
-  var base64 = (base64String + padding)
-    .replace(/\-/g, '+')
-    .replace(/_/g, '/');
+    function setUserIcon (){
+        var appSettings = ew.fn.getAppSettings();
+        if(appSettings.CurrentUser) {
+            var userIcon = document.querySelector('#userDropdown');
+            userIcon.innerHTML = `
+                <img src="${appSettings.CurrentUser.avatar}" height="25" 
+                    style="margin-top:-5px;border-radius:50%;border:3px solid blueviolet;" />
+                `;
+        }
+    }
 
-  var rawData = window.atob(base64);
-  var outputArray = new Uint8Array(rawData.length);
+}());
 
-  for (var i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
-}
-
-function dataURItoBlob(dataURI) {
-  var byteString = atob(dataURI.split(',')[1]);
-  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
-  var ab = new ArrayBuffer(byteString.length);
-  var ia = new Uint8Array(ab);
-  for (var i = 0; i < byteString.length; i++) {
-    ia[i] = byteString.charCodeAt(i);
-  }
-  var blob = new Blob([ab], {type: mimeString});
-  return blob;
-}
+(function(){
+    if(navigator.serviceWorker) {
+        navigator.serviceWorker
+            .register('/service-worker.js')
+            .then(function () {
+                console.log('Service worker registered!');
+            })
+            .catch(function(err) {
+                console.log(err);
+            });
+    };
+}())
