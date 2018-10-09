@@ -6,14 +6,64 @@
 	// 	initMap(user);
 	// });
 	var edb = ew.database;
+	var currentUserId = +location.hash.slice(1);
 
 	edb.open(edb.name, function(db){
-		db.get('Employees', 'id', +location.hash.slice(1), function(user){
-			// ew.tempUser = user;
+		db.get('Employees', 'id', currentUserId, function(user){
 			userDetailsWrapper.innerHTML = getUserDetailsTemplate(user);
 			initMap(user);
 		});
-	})
+
+		db.getAll('Employees', function(allUsers){
+			var swAction = {
+				action: 'getSubordinates',
+				arguments: [currentUserId, allUsers]
+			};
+
+			navigator.serviceWorker.ready.then(function(swreg) {
+
+				navigator.serviceWorker.addEventListener('message', function(event){
+			        var arrUsers = event.data;
+
+			        var trs = '';
+					for (var i = 0; i < arrUsers.length; i++) {
+						trs += `
+							<tr>
+								<td> 
+									<img src=${arrUsers[i].avatar} width="100"/>
+								</td>
+								<td> 
+									<h5>${arrUsers[i].firstName} ${arrUsers[i].lastName}</h5>
+									<div class="badge badge-warning">${arrUsers[i].position}</div>
+									<div style="font-size: 12px;">
+										<i class="fa fa-envelope text-info"></i> ${arrUsers[i].email}
+									</div>
+
+									<div style="margin-top:5px;">
+										<a class="" 
+										   href="/pages/empl-details.html#${arrUsers[i].id}">View</a> 
+									</div>
+								</td>
+							</tr>
+						`;
+					};
+					employeesBody.innerHTML = trs;
+					$('#dataTable').DataTable({
+						columnDefs: [
+					  		{ targets: 'no-sort', orderable: false }
+						]
+					});
+			    });
+				navigator.serviceWorker.controller.postMessage(JSON.stringify(swAction));
+
+			});
+		})
+	});
+
+
+
+
+
 
 	function getUserDetailsTemplate(user){
 		return `

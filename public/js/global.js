@@ -49,11 +49,12 @@ var ew = (function() {
 
 (function() {
     setUserIcon();
+
     document.body.addEventListener('userChanged', function(){
         console.log('GLOBAL_USER_CHANGED');
     });
 
-    function setUserIcon (){
+    function setUserIcon() {
         var appSettings = ew.fn.getAppSettings();
         if(appSettings.CurrentUser) {
             var userIcon = document.querySelector('#userDropdown');
@@ -62,8 +63,7 @@ var ew = (function() {
                     style="margin-top:-5px;border-radius:50%;border:3px solid blueviolet;" />
                 `;
         }
-    }
-
+    };
 }());
 
 (function(){
@@ -77,4 +77,4 @@ var ew = (function() {
                 console.log(err);
             });
     };
-}())
+}());

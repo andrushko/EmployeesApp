@@ -1,6 +1,6 @@
 // var connection = new WebSocket("wss://andrushko-test1.herokuapp.com/");
 (function() {
-    ew.fn.getCurrentUser(function(user){
+    ew.fn.getCurrentUser(function(user) {
 
         var picture,
             picBase64,

@@ -110,6 +110,10 @@
             <li class="breadcrumb-item">
               <a href="index.html">Home</a>
             </li>
+            <li class="breadcrumb-item">
+              <span id="currentUserName"></span>
+            </li>
+
           </ol>
           
           <h1 class="display-4">Employees manager</h1>
@@ -126,7 +130,7 @@
                   <div class="card-body-icon">
                     <i class="fas fa-fw fa-users"></i>
                   </div>
-                  <div class="mr-5"><span>11</span> Employees Total!</div>
+                  <div class="mr-5"><span id="countOfEmployees"></span> Employees Total!</div>
                 </div>
                 <a class="card-footer text-white clearfix small z-1" href="pages/employees.html">
                   <span class="float-left">View Details</span>
@@ -208,6 +212,7 @@
     <script src="/js/services/db.service.js"></script>
     <script src="/js/services/http.service.js"></script>
     <script src="/js/services/user.service.js"></script>
+    <script src="/js/index.js"></script>
 
   </body>
 </html>

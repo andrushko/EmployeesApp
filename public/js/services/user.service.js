@@ -1,15 +1,19 @@
 (function(){
     var edb = ew.database;
 
-    ew.http.get(ew.apis.employees, null, function(arrUsers) {
-        if(arrUsers){
-            edb.open(edb.name, function(db) {
-                for (var i = 0; i < arrUsers.length; i++) {
-                    db.upsert('Employees', arrUsers[i], () => {});
-                }
-            });
-        }
-    });
+    ew.fn.populateUsers = function(cb){
+        ew.http.get(ew.apis.employees, null, function(arrUsers) {
+            if(arrUsers){
+                edb.open(edb.name, function(db) {
+                    for (var i = 0; i < arrUsers.length; i++) {
+                        db.upsert('Employees', arrUsers[i], () => {});
+                    }
+                });
+                cb(arrUsers.length);
+            }
+        });
+    }
+
 
     ew.fn.getCurrentUser = function(cb){
         var appSettings = ew.fn.getAppSettings();
